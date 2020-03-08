@@ -442,7 +442,7 @@ class DROFrame(CNCRibbon.PageFrame):
         except:
             pass
 
-    def vision(self, event=None):
+    def setvision(self, event=None):
         if self.app.running: return
         try:
             self.app.mcontrol.home()
