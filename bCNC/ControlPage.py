@@ -31,6 +31,7 @@ import CNCRibbon
 from Sender import ERROR_CODES
 from CNC import WCS, DISTANCE_MODE, FEED_MODE, UNITS, PLANE
 import time
+
 _LOWSTEP = 0.0001
 _HIGHSTEP = 1000.0
 _HIGHZSTEP = 10.0
@@ -98,7 +99,6 @@ class SensoPart:
         # print(y_d, x_d)
         return x_d
 
-
     def trans(self, cmd):
         # with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         #     s.connect((self.HOST, self.RPORT))
@@ -112,6 +112,7 @@ class SensoPart:
     def close(self):
         self.sr.close()
         self.st.close()
+
 
 # vision = SensoPart()
 # vision.trans('CJB005')
@@ -400,13 +401,22 @@ class DROFrame(CNCRibbon.PageFrame):
         row += 1
         col = 1
 
-        self.vision = Button(self, text=_("Vision"),
+        self.vision = Button(self, text=_("Daily Vision"),
                              command=self.setvision,
                              activebackground="LightYellow",
                              padx=2, pady=1, font=helv24)
         self.vision.grid(row=row, column=col, pady=0, sticky=EW)
-        tkExtra.Balloon.set(self.vision, _("Set Z coordinate to zero (or to typed coordinate in WPos)"))
+        tkExtra.Balloon.set(self.vision, _("Daily Probe"))
         self.addWidget(self.vision)
+
+        col += 1
+        self.vision2 = Button(self, text=_("Work Vision"),
+                             command=self.setvision2,
+                             activebackground="LightYellow",
+                             padx=2, pady=1, font=helv24)
+        self.vision2.grid(row=row, column=col, pady=0, sticky=EW)
+        tkExtra.Balloon.set(self.vision2, _("Work Probe"))
+        self.addWidget(self.vision2)
 
         # f = Frame(self)
         # f.grid(row=row, column=col, columnspan=3, pady=0, sticky=EW)
@@ -545,13 +555,11 @@ class DROFrame(CNCRibbon.PageFrame):
     def setvision(self, event=None):
         if self.app.running: return
         try:
-            
-          
 
             self.app.mcontrol.home()
             self.app.mcontrol.jog("X%sY%s" % ("114.0", "56.0"))
             self.app.mcontrol.jog("Z%s" % ("-58.0"))
-            #self.app.mcontrol._wcsSet("0", "0", "0")
+            # self.app.mcontrol._wcsSet("0", "0", "0")
             time.sleep(120)
 
             a = SensoPart()
@@ -575,7 +583,58 @@ class DROFrame(CNCRibbon.PageFrame):
 
             a.trans('CJB001')
 
-            print("xd={}, yd={}".format(xd/30, yd/30))
+            print("xd={}, yd={}".format(xd / 30, yd / 30))
+
+            xm = round(xd / 30 * (0.01 / 46), 3)
+            ym = round(yd / 30 * (0.01 / 424), 3)
+            self.app.mcontrol.jog("X%s" % (-xm))
+            self.app.mcontrol.jog("Y%s" % (-ym))
+            time.sleep(2)
+            self.app.mcontrol._wcsSet("0", "0", "0")
+            time.sleep(2)
+            self.app.mcontrol.jog("X%s" % (-17.1))
+            self.app.mcontrol.jog("Y%s" % (58.9))
+            self.app.mcontrol.jog("Z%s" % (-1.2))
+            time.sleep(5)
+            self.app.mcontrol._wcsSet("1", "1", "0")
+
+            print('end')
+            a.close()
+        except:
+            pass
+
+    def setvision2(self, event=None):
+        if self.app.running: return
+        try:
+
+            self.app.mcontrol.home()
+            self.app.mcontrol.jog("X%sY%s" % ("114.0", "56.0"))
+            self.app.mcontrol.jog("Z%s" % ("-58.0"))
+            # self.app.mcontrol._wcsSet("0", "0", "0")
+            time.sleep(120)
+
+            a = SensoPart()
+            a.trans('CJB005')
+            time.sleep(3)
+            data = a.receive()
+            data = data.decode('utf-8')
+            temp = data[1:-2].split("|")
+            print("xd={}, yd={}".format(temp[1], temp[0]))
+
+            xd = 0
+            yd = 0
+            for i in range(30):
+                data = a.receive()
+                data = data.decode('utf-8')
+                temp = data[1:-2].split("|")
+                xd += int(temp[1])
+                yd += int(temp[0])
+                time.sleep(1)
+                print(xd, yd)
+
+            a.trans('CJB001')
+
+            print("xd={}, yd={}".format(xd / 30, yd / 30))
 
             xm = round(xd / 30 * (0.01 / 46), 3)
             ym = round(yd / 30 * (0.01 / 424), 3)
@@ -613,9 +672,6 @@ class DROFrame(CNCRibbon.PageFrame):
         msg += ERROR_CODES.get(state,
                                _("No info available.\nPlease contact the author."))
         tkMessageBox.showinfo(_("State: %s") % (state), msg, parent=self)
-
-
-
 
 
 # ===============================================================================
@@ -1053,7 +1109,7 @@ class StateFrame(CNCRibbon.PageExLabelFrame):
             b.pack(side=LEFT, fill=X, expand=YES)
             tkExtra.Balloon.set(b, _("Switch to workspace %s") % (w))
             # self.addWidget(b)
-        
+
         # Absolute or relative mode
         row += 1
         col = 0
@@ -1086,25 +1142,25 @@ class StateFrame(CNCRibbon.PageExLabelFrame):
         tkExtra.Balloon.set(self.units, _("Units [G20, G21]"))
         for k, v in UNITS.items(): self.gstate[k] = (self.units, v)
         # self.addWidget(self.units)
-        
+
         # Tool
         row += 1
         col = 0
         Label(f, text=_("Tool:")).grid(row=row, column=col, sticky=E)
-        
+
         col += 1
         self.toolEntry = tkExtra.IntegerEntry(f, background=tkExtra.GLOBAL_CONTROL_BACKGROUND, width=5)
         self.toolEntry.grid(row=row, column=col, sticky=EW)
         tkExtra.Balloon.set(self.toolEntry, _("Tool number [T#]"))
         # self.addWidget(self.toolEntry)
-        
+
         col += 1
         b = Button(f, text=_("set"),
                    command=self.setTool,
                    padx=1, pady=1)
         b.grid(row=row, column=col, sticky=W)
         # self.addWidget(b)
-        
+
         # Plane
         col += 1
         Label(f, text=_("Plane:")).grid(row=row, column=col, sticky=E)
@@ -1117,14 +1173,14 @@ class StateFrame(CNCRibbon.PageExLabelFrame):
         self.plane.grid(row=row, column=col, sticky=EW)
         tkExtra.Balloon.set(self.plane, _("Plane [G17,G18,G19]"))
         # self.addWidget(self.plane)
-        
+
         for k, v in PLANE.items(): self.gstate[k] = (self.plane, v)
-        
+
         # Feed speed
         row += 1
         col = 0
         Label(f, text=_("Feed:")).grid(row=row, column=col, sticky=E)
-        
+
         col += 1
         self.feedRate = tkExtra.FloatEntry(f, background=tkExtra.GLOBAL_CONTROL_BACKGROUND, disabledforeground="Black",
                                            width=5)
@@ -1133,18 +1189,18 @@ class StateFrame(CNCRibbon.PageExLabelFrame):
         self.feedRate.bind('<KP_Enter>', self.setFeedRate)
         tkExtra.Balloon.set(self.feedRate, _("Feed Rate [F#]"))
         self.addWidget(self.feedRate)
-        
+
         col += 1
         b = Button(f, text=_("set"),
                    command=self.setFeedRate,
                    padx=1, pady=1)
         b.grid(row=row, column=col, columnspan=2, sticky=W)
         # self.addWidget(b)
-        
+
         # Feed mode
         col += 1
         Label(f, text=_("Mode:")).grid(row=row, column=col, sticky=E)
-        
+
         col += 1
         self.feedMode = tkExtra.Combobox(f, True,
                                          command=self.feedModeChange,
@@ -1155,12 +1211,12 @@ class StateFrame(CNCRibbon.PageExLabelFrame):
         tkExtra.Balloon.set(self.feedMode, _("Feed Mode [G93, G94, G95]"))
         for k, v in FEED_MODE.items(): self.gstate[k] = (self.feedMode, v)
         self.addWidget(self.feedMode)
-        
+
         # TLO
         row += 1
         col = 0
         Label(f, text=_("TLO:")).grid(row=row, column=col, sticky=E)
-        
+
         col += 1
         self.tlo = tkExtra.FloatEntry(f, background=tkExtra.GLOBAL_CONTROL_BACKGROUND, disabledforeground="Black",
                                       width=5)
@@ -1169,47 +1225,47 @@ class StateFrame(CNCRibbon.PageExLabelFrame):
         self.tlo.bind('<KP_Enter>', self.setTLO)
         tkExtra.Balloon.set(self.tlo, _("Tool length offset [G43.1#]"))
         # self.addWidget(self.tlo)
-        
+
         col += 1
         b = Button(f, text=_("set"),
                    command=self.setTLO,
                    padx=1, pady=1)
         b.grid(row=row, column=col, columnspan=2, sticky=W)
         # self.addWidget(b)
-        
+
         # g92
         col += 1
         Label(f, text=_("G92:")).grid(row=row, column=col, sticky=E)
-        
+
         col += 1
         self.g92 = Label(f, text="")
         self.g92.grid(row=row, column=col, columnspan=3, sticky=EW)
         tkExtra.Balloon.set(self.g92, _("Set position [G92 X# Y# Z#]"))
         # self.addWidget(self.g92)
-        
+
         # ---
         f.grid_columnconfigure(1, weight=1)
         f.grid_columnconfigure(4, weight=1)
-        
+
         # Spindle
         f = Frame(self())
         f.pack(side=BOTTOM, fill=X)
-        
+
         self.override = IntVar()
         self.override.set(100)
         self.spindle = BooleanVar()
         self.spindleSpeed = IntVar()
-        
+
         col, row = 0, 0
         self.overrideCombo = tkExtra.Combobox(f, width=8, command=self.overrideComboChange)
         self.overrideCombo.fill(OVERRIDES)
         self.overrideCombo.grid(row=row, column=col, pady=0, sticky=EW)
         tkExtra.Balloon.set(self.overrideCombo, _("Select override type."))
-        
+
         b = Button(f, text=_("Reset"), pady=0, command=self.resetOverride)
         b.grid(row=row + 1, column=col, pady=0, sticky=NSEW)
         tkExtra.Balloon.set(b, _("Reset override to 100%"))
-        
+
         col += 1
         self.overrideScale = Scale(f,
                                    command=self.overrideChange,
@@ -1223,9 +1279,9 @@ class StateFrame(CNCRibbon.PageExLabelFrame):
         self.overrideScale.bind("<Button-3>", self.resetOverride)
         self.overrideScale.grid(row=row, column=col, rowspan=2, columnspan=4, sticky=EW)
         tkExtra.Balloon.set(self.overrideScale, _("Set Feed/Rapid/Spindle Override. Right or Double click to reset."))
-        
+
         self.overrideCombo.set(OVERRIDES[0])
-        
+
         # ---
         row += 2
         col = 0
@@ -1240,7 +1296,7 @@ class StateFrame(CNCRibbon.PageExLabelFrame):
         tkExtra.Balloon.set(b, _("Start/Stop spindle (M3/M5)"))
         b.grid(row=row, column=col, pady=0, sticky=NSEW)
         # self.addWidget(b)
-        
+
         col += 1
         b = Scale(f, variable=self.spindleSpeed,
                   command=self.spindleControl,
@@ -1251,20 +1307,20 @@ class StateFrame(CNCRibbon.PageExLabelFrame):
         tkExtra.Balloon.set(b, _("Set spindle RPM"))
         b.grid(row=row, column=col, sticky=EW, columnspan=3)
         self.addWidget(b)
-        
+
         f.grid_columnconfigure(1, weight=1)
-        
+
         # Coolant control
-        
+
         self.coolant = BooleanVar()
         self.mist = BooleanVar()
         self.flood = BooleanVar()
-        
+
         row += 1
         col = 0
         Label(f, text=_("Coolant:")).grid(row=row, column=col, sticky=E)
         col += 1
-        
+
         coolantDisable = Checkbutton(f, text=_("OFF"),
                                      command=self.coolantOff,
                                      indicatoron=False,
@@ -1274,7 +1330,7 @@ class StateFrame(CNCRibbon.PageExLabelFrame):
         tkExtra.Balloon.set(coolantDisable, _("Stop cooling (M9)"))
         coolantDisable.grid(row=row, column=col, pady=0, sticky=NSEW)
         # self.addWidget(coolantDisable)
-        
+
         col += 1
         floodEnable = Checkbutton(f, text=_("Flood"),
                                   command=self.coolantFlood,
@@ -1285,7 +1341,7 @@ class StateFrame(CNCRibbon.PageExLabelFrame):
         tkExtra.Balloon.set(floodEnable, _("Start flood (M8)"))
         floodEnable.grid(row=row, column=col, pady=0, sticky=NSEW)
         # self.addWidget(floodEnable)
-        
+
         col += 1
         mistEnable = Checkbutton(f, text=_("Mist"),
                                  command=self.coolantMist,

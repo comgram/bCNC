@@ -791,7 +791,8 @@ class Sender:
                             self._gcount += 1
                             tosend = None
                 except Empty:
-                    break
+                    # break
+                    pass
 
                 if tosend is not None:
                     # All modification in tosend should be
@@ -826,6 +827,9 @@ class Sender:
                     # Bookkeeping of the buffers
                     sline.append(tosend)
                     cline.append(len(tosend))
+                    del sline[:]
+                    del cline[:]
+                    self.log.put((Sender.MSG_CLEAR, ""))
 
             # Anything to receive?
             if self.serial.inWaiting() or tosend is None:

@@ -1,0 +1,795 @@
+(Generated with: DXF2GCODE, Version: Py3.6.7 PyQt5.11.3, Date: $Date: Fri Oct 25 20:45:56 2019 +0200 $)
+(Created from file: D:/Cloud/OneDrive - KODIS/Desktop/harman/large_point_2.dxf)
+(Output format description: G-CODE for grbl)
+(Time: Sat Mar  7 17:56:14 2020)
+G21 (Units in millimeters)
+G90 (Absolute programming)
+
+G0 Z   0.000 
+
+(*** LAYER: LRG1 ***)
+T1 M6
+S6000
+
+(* SHAPE Nr: 154 *)
+G0 X   6.276 Y   1.684
+M3 M8
+G0 Z   0.000 
+F2000
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 204 *)
+G0 X  34.732 Y   3.508
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 155 *)
+G0 X   7.784 Y   1.794
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 205 *)
+G0 X  34.732 Y   4.404
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 156 *)
+G0 X   7.784 Y   2.575
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 206 *)
+G0 X  37.104 Y   3.791
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 157 *)
+G0 X   7.784 Y   3.461
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 207 *)
+G0 X  36.328 Y   3.511
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 158 *)
+G0 X   8.674 Y   3.589
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 208 *)
+G0 X  36.073 Y   2.707
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 159 *)
+G0 X  10.002 Y   3.464
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 209 *)
+G0 X  36.328 Y   1.632
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 160 *)
+G0 X  10.002 Y   2.579
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 210 *)
+G0 X  37.104 Y   1.336
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 161 *)
+G0 X  10.002 Y   1.684
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 211 *)
+G0 X  37.898 Y   1.635
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 162 *)
+G0 X  11.188 Y   3.746
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 212 *)
+G0 X  38.148 Y   2.629
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 163 *)
+G0 X  11.730 Y   2.707
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 213 *)
+G0 X  37.898 Y   3.513
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 164 *)
+G0 X  11.730 Y   1.794
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 214 *)
+G0 X  39.438 Y   1.637
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 165 *)
+G0 X  12.813 Y   3.731
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 215 *)
+G0 X  39.438 Y   2.631
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 166 *)
+G0 X  13.380 Y   2.707
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 216 *)
+G0 X  39.438 Y   3.516
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 167 *)
+G0 X  13.380 Y   1.794
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 217 *)
+G0 X  40.701 Y   3.798
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 168 *)
+G0 X  14.972 Y   3.589
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 218 *)
+G0 X  41.359 Y   2.840
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 169 *)
+G0 X  16.475 Y   3.274
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 219 *)
+G0 X  41.359 Y   1.794
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 170 *)
+G0 X  16.475 Y   2.591
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 171 *)
+G0 X  14.884 Y   2.308
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 172 *)
+G0 X  14.884 Y   1.432
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 173 *)
+G0 X  16.475 Y   1.684
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 174 *)
+G0 X  17.932 Y   1.684
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 175 *)
+G0 X  17.932 Y   2.593
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 176 *)
+G0 X  17.932 Y   3.478
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 177 *)
+G0 X  19.195 Y   3.760
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 178 *)
+G0 X  19.801 Y   2.707
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 179 *)
+G0 X  19.801 Y   1.794
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 180 *)
+G0 X  21.725 Y   2.320
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 181 *)
+G0 X  22.722 Y   4.027
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 182 *)
+G0 X  24.494 Y   1.794
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 183 *)
+G0 X  24.494 Y   2.707
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 184 *)
+G0 X  24.494 Y   3.490
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 185 *)
+G0 X  24.494 Y   4.260
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 186 *)
+G0 X  25.216 Y   2.707
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 187 *)
+G0 X  25.699 Y   3.290
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 188 *)
+G0 X  25.802 Y   2.141
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 189 *)
+G0 X  27.814 Y   3.589
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 190 *)
+G0 X  29.316 Y   3.297
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 191 *)
+G0 X  29.316 Y   2.613
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 153 *)
+G0 X   4.698 Y   1.432
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 142 *)
+G0 X   1.402 Y   1.684
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 192 *)
+G0 X  27.683 Y   2.331
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 143 *)
+G0 X   1.402 Y   2.564
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 193 *)
+G0 X  27.683 Y   1.432
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 144 *)
+G0 X   1.402 Y   3.449
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 194 *)
+G0 X  29.316 Y   1.684
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 145 *)
+G0 X   1.402 Y   4.404
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 195 *)
+G0 X  30.683 Y   1.622
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 146 *)
+G0 X   2.614 Y   3.656
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 196 *)
+G0 X  30.683 Y   2.615
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 147 *)
+G0 X   3.246 Y   2.840
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 197 *)
+G0 X  30.683 Y   3.501
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 148 *)
+G0 X   3.246 Y   1.794
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 198 *)
+G0 X  31.573 Y   3.656
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 149 *)
+G0 X   4.831 Y   3.589
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 199 *)
+G0 X  33.281 Y   3.644
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 150 *)
+G0 X   6.276 Y   3.256
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 200 *)
+G0 X  32.733 Y   2.619
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 151 *)
+G0 X   6.276 Y   2.573
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 201 *)
+G0 X  33.281 Y   1.432
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 152 *)
+G0 X   4.698 Y   2.290
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 202 *)
+G0 X  34.732 Y   1.684
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+
+(* SHAPE Nr: 203 *)
+G0 X  34.732 Y   2.623
+M3 M8
+G0 Z   0.000 
+G1 Z   0.000
+(Drilled hole)
+G1 Z   0.000
+G0 Z   0.000 
+M9 M5
+G0 X   0.000 Y   0.000
+M2 (Program end)
