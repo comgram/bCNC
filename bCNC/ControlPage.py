@@ -30,7 +30,7 @@ import Unicode
 import CNCRibbon
 from Sender import ERROR_CODES
 from CNC import WCS, DISTANCE_MODE, FEED_MODE, UNITS, PLANE
-
+import time
 _LOWSTEP = 0.0001
 _HIGHSTEP = 1000.0
 _HIGHZSTEP = 10.0
@@ -38,6 +38,106 @@ _NOZSTEP = 'XY'
 
 OVERRIDES = ["Feed", "Rapid", "Spindle"]
 
+
+class SensoPart:
+    def __init__(self):
+        self.HOST = '192.168.100.100'
+        self.RPORT = 2005
+        self.TPORT = 2006
+        self.sr = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.sr.connect((self.HOST, self.RPORT))
+        self.st = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.st.connect((self.HOST, self.TPORT))
+
+    def receive(self):
+        # with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        #     s.connect((self.HOST, self.RPORT))
+        #     data = s.recv(1024)
+        # s.close()
+        # self.sr.sendall(bytes("get", 'utf-8'))
+        # data = self.sr.recv(1024)
+        data = bytes()
+        start = False
+        while True:
+            r = self.sr.recv(1)
+            if start:
+                data += r
+                if r == b'>':
+                    break
+            else:
+                if r == b'<':
+                    data += r
+                    start = True
+        return data
+
+    def receive_my_xd(self):
+        # with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        #     s.connect((self.HOST, self.RPORT))
+        #     data = s.recv(1024)
+        # s.close()
+        self.sr.sendall(bytes("get", 'utf-8'))
+        data = self.sr.recv(1024)
+        data = data.decode('utf-8')
+        temp = data[1:-2].split("|")
+        y_d = int(temp[0])
+        x_d = int(temp[1])
+        # print(y_d, x_d)
+        return y_d
+
+    def receive_my_yd(self):
+        # with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        #     s.connect((self.HOST, self.RPORT))
+        #     data = s.recv(1024)
+        # s.close()
+        self.sr.sendall(bytes("get", 'utf-8'))
+        data = self.sr.recv(1024)
+        data = data.decode('utf-8')
+        temp = data[1:-2].split("|")
+        y_d = int(temp[0])
+        x_d = int(temp[1])
+        # print(y_d, x_d)
+        return x_d
+
+
+    def trans(self, cmd):
+        # with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        #     s.connect((self.HOST, self.RPORT))
+        #     s.sendall(bytes(cmd, 'utf-8'))
+        #     data = s.recv(1024)
+        # s.close()
+        self.st.sendall(bytes(cmd, 'utf-8'))
+        data = self.st.recv(1024)
+        return data
+
+    def close(self):
+        self.sr.close()
+        self.st.close()
+
+# vision = SensoPart()
+# vision.trans('CJB005')
+# xd = vision.receive_my_xd()
+# yd = vision.receive_my_yd()
+
+# xd = vision.receive_my_xd()
+# yd = vision.receive_my_yd()
+
+# xd = vision.receive_my_xd()
+# yd = vision.receive_my_yd()
+
+# print("xd=".format(xd))
+# print("yd=".format(yd))
+
+# data = vision.receive()
+# data = data.decode('utf-8')
+# temp = data[1:-2].split("|")
+# print(temp)
+# xd = vision.receive_my_xd()
+# yd = vision.receive_my_yd()
+# print("xd=".format(xd))
+# print("yd=".format(yd))
+
+
+# print(xd,yd)
 
 # ===============================================================================
 # Connection Group
@@ -445,13 +545,53 @@ class DROFrame(CNCRibbon.PageFrame):
     def setvision(self, event=None):
         if self.app.running: return
         try:
+            
+          
+
             self.app.mcontrol.home()
             self.app.mcontrol.jog("X%sY%s" % ("114.0", "56.0"))
             self.app.mcontrol.jog("Z%s" % ("-58.0"))
-            self.app.mcontrol._wcsSet("0", "0", "0")
+            #self.app.mcontrol._wcsSet("0", "0", "0")
+            time.sleep(120)
+
             a = SensoPart()
             a.trans('CJB005')
+            time.sleep(3)
             data = a.receive()
+            data = data.decode('utf-8')
+            temp = data[1:-2].split("|")
+            print("xd={}, yd={}".format(temp[1], temp[0]))
+
+            xd = 0
+            yd = 0
+            for i in range(30):
+                data = a.receive()
+                data = data.decode('utf-8')
+                temp = data[1:-2].split("|")
+                xd += int(temp[1])
+                yd += int(temp[0])
+                time.sleep(1)
+                print(xd, yd)
+
+            a.trans('CJB001')
+
+            print("xd={}, yd={}".format(xd/30, yd/30))
+
+            xm = round(xd / 30 * (0.01 / 46), 3)
+            ym = round(yd / 30 * (0.01 / 424), 3)
+            self.app.mcontrol.jog("X%s" % (-xm))
+            self.app.mcontrol.jog("Y%s" % (-ym))
+            time.sleep(2)
+            self.app.mcontrol._wcsSet("0", "0", "0")
+            time.sleep(2)
+            self.app.mcontrol.jog("X%s" % (-17.1))
+            self.app.mcontrol.jog("Y%s" % (58.9))
+            self.app.mcontrol.jog("Z%s" % (-1.2))
+            time.sleep(5)
+            self.app.mcontrol._wcsSet("1", "1", "0")
+
+            print('end')
+            a.close()
         except:
             pass
 
@@ -475,26 +615,7 @@ class DROFrame(CNCRibbon.PageFrame):
         tkMessageBox.showinfo(_("State: %s") % (state), msg, parent=self)
 
 
-class SensoPart:
-    def __init__(self):
-        self.HOST = '192.168.100.100'
-        self.RPORT = 2005
-        self.TPORT = 2006
 
-    def receive(self):
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            s.connect((self.HOST, self.RPORT))
-            data = s.recv(1024)
-        s.close()
-        return data
-
-    def trans(self, cmd):
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            s.connect((self.HOST, self.RPORT))
-            s.sendall(bytes(cmd, 'utf-8'))
-            data = s.recv(1024)
-        s.close()
-        return data
 
 
 # ===============================================================================
@@ -910,272 +1031,272 @@ class StateFrame(CNCRibbon.PageExLabelFrame):
         CNCRibbon.PageExLabelFrame.__init__(self, master, "State", _("State"), app)
         self._gUpdate = False
 
-        # # State
-        # f = Frame(self())
-        # f.pack(side=TOP, fill=X)
+        # State
+        f = Frame(self())
+        f.pack(side=TOP, fill=X)
         #
         # # ===
-        # col, row = 0, 0
-        # f2 = Frame(f)
-        # f2.grid(row=row, column=col, columnspan=5, sticky=EW)
-        # for p, w in enumerate(WCS):
-        #     col += 1
-        #     b = Radiobutton(f2, text=w,
-        #                     foreground="DarkRed",
-        #                     font="Helvetica,14",
-        #                     padx=1, pady=1,
-        #                     variable=wcsvar,
-        #                     value=p,
-        #                     indicatoron=FALSE,
-        #                     activebackground="LightYellow",
-        #                     command=self.wcsChange)
-        #     b.pack(side=LEFT, fill=X, expand=YES)
-        #     tkExtra.Balloon.set(b, _("Switch to workspace %s") % (w))
-        #     # self.addWidget(b)
+        col, row = 0, 0
+        f2 = Frame(f)
+        f2.grid(row=row, column=col, columnspan=5, sticky=EW)
+        for p, w in enumerate(WCS):
+            col += 1
+            b = Radiobutton(f2, text=w,
+                            foreground="DarkRed",
+                            font="Helvetica,14",
+                            padx=1, pady=1,
+                            variable=wcsvar,
+                            value=p,
+                            indicatoron=FALSE,
+                            activebackground="LightYellow",
+                            command=self.wcsChange)
+            b.pack(side=LEFT, fill=X, expand=YES)
+            tkExtra.Balloon.set(b, _("Switch to workspace %s") % (w))
+            # self.addWidget(b)
+        
+        # Absolute or relative mode
+        row += 1
+        col = 0
+        Label(f, text=_("Distance:")).grid(row=row, column=col, sticky=E)
+        col += 1
+        self.distance = tkExtra.Combobox(f, True,
+                                         command=self.distanceChange,
+                                         width=5,
+                                         background=tkExtra.GLOBAL_CONTROL_BACKGROUND)
+        self.distance.fill(sorted(DISTANCE_MODE.values()))
+        self.distance.grid(row=row, column=col, columnspan=2, sticky=EW)
+        tkExtra.Balloon.set(self.distance, _("Distance Mode [G90,G91]"))
+        self.addWidget(self.distance)
         #
-        # # Absolute or relative mode
-        # row += 1
-        # col = 0
-        # Label(f, text=_("Distance:")).grid(row=row, column=col, sticky=E)
-        # col += 1
-        # self.distance = tkExtra.Combobox(f, True,
-        #                                  command=self.distanceChange,
-        #                                  width=5,
-        #                                  background=tkExtra.GLOBAL_CONTROL_BACKGROUND)
-        # self.distance.fill(sorted(DISTANCE_MODE.values()))
-        # self.distance.grid(row=row, column=col, columnspan=2, sticky=EW)
-        # tkExtra.Balloon.set(self.distance, _("Distance Mode [G90,G91]"))
-        # # self.addWidget(self.distance)
+        # populate gstate dictionary
+        self.gstate = {}  # $G state results widget dictionary
+        for k, v in DISTANCE_MODE.items():
+            self.gstate[k] = (self.distance, v)
         #
-        # # populate gstate dictionary
-        # self.gstate = {}  # $G state results widget dictionary
-        # for k, v in DISTANCE_MODE.items():
-        #     self.gstate[k] = (self.distance, v)
-        #
-        # # Units mode
-        # col += 2
-        # Label(f, text=_("Units:")).grid(row=row, column=col, sticky=E)
-        # col += 1
-        # self.units = tkExtra.Combobox(f, True,
-        #                               command=self.unitsChange,
-        #                               width=5,
-        #                               background=tkExtra.GLOBAL_CONTROL_BACKGROUND)
-        # self.units.fill(sorted(UNITS.values()))
-        # self.units.grid(row=row, column=col, sticky=EW)
-        # tkExtra.Balloon.set(self.units, _("Units [G20, G21]"))
-        # for k, v in UNITS.items(): self.gstate[k] = (self.units, v)
-        # # self.addWidget(self.units)
-        #
-        # # Tool
-        # row += 1
-        # col = 0
-        # Label(f, text=_("Tool:")).grid(row=row, column=col, sticky=E)
-        #
-        # col += 1
-        # self.toolEntry = tkExtra.IntegerEntry(f, background=tkExtra.GLOBAL_CONTROL_BACKGROUND, width=5)
-        # self.toolEntry.grid(row=row, column=col, sticky=EW)
-        # tkExtra.Balloon.set(self.toolEntry, _("Tool number [T#]"))
-        # # self.addWidget(self.toolEntry)
-        #
-        # col += 1
-        # b = Button(f, text=_("set"),
-        #            command=self.setTool,
-        #            padx=1, pady=1)
-        # b.grid(row=row, column=col, sticky=W)
-        # # self.addWidget(b)
-        #
-        # # Plane
-        # col += 1
-        # Label(f, text=_("Plane:")).grid(row=row, column=col, sticky=E)
-        # col += 1
-        # self.plane = tkExtra.Combobox(f, True,
-        #                               command=self.planeChange,
-        #                               width=5,
-        #                               background=tkExtra.GLOBAL_CONTROL_BACKGROUND)
-        # self.plane.fill(sorted(PLANE.values()))
-        # self.plane.grid(row=row, column=col, sticky=EW)
-        # tkExtra.Balloon.set(self.plane, _("Plane [G17,G18,G19]"))
-        # # self.addWidget(self.plane)
-        #
-        # for k, v in PLANE.items(): self.gstate[k] = (self.plane, v)
-        #
-        # # Feed speed
-        # row += 1
-        # col = 0
-        # Label(f, text=_("Feed:")).grid(row=row, column=col, sticky=E)
-        #
-        # col += 1
-        # self.feedRate = tkExtra.FloatEntry(f, background=tkExtra.GLOBAL_CONTROL_BACKGROUND, disabledforeground="Black",
-        #                                    width=5)
-        # self.feedRate.grid(row=row, column=col, sticky=EW)
-        # self.feedRate.bind('<Return>', self.setFeedRate)
-        # self.feedRate.bind('<KP_Enter>', self.setFeedRate)
-        # tkExtra.Balloon.set(self.feedRate, _("Feed Rate [F#]"))
-        # # self.addWidget(self.feedRate)
-        #
-        # col += 1
-        # b = Button(f, text=_("set"),
-        #            command=self.setFeedRate,
-        #            padx=1, pady=1)
-        # b.grid(row=row, column=col, columnspan=2, sticky=W)
-        # # self.addWidget(b)
-        #
-        # # Feed mode
-        # col += 1
-        # Label(f, text=_("Mode:")).grid(row=row, column=col, sticky=E)
-        #
-        # col += 1
-        # self.feedMode = tkExtra.Combobox(f, True,
-        #                                  command=self.feedModeChange,
-        #                                  width=5,
-        #                                  background=tkExtra.GLOBAL_CONTROL_BACKGROUND)
-        # self.feedMode.fill(sorted(FEED_MODE.values()))
-        # self.feedMode.grid(row=row, column=col, sticky=EW)
-        # tkExtra.Balloon.set(self.feedMode, _("Feed Mode [G93, G94, G95]"))
-        # for k, v in FEED_MODE.items(): self.gstate[k] = (self.feedMode, v)
-        # # self.addWidget(self.feedMode)
-        #
-        # # TLO
-        # row += 1
-        # col = 0
-        # Label(f, text=_("TLO:")).grid(row=row, column=col, sticky=E)
-        #
-        # col += 1
-        # self.tlo = tkExtra.FloatEntry(f, background=tkExtra.GLOBAL_CONTROL_BACKGROUND, disabledforeground="Black",
-        #                               width=5)
-        # self.tlo.grid(row=row, column=col, sticky=EW)
-        # self.tlo.bind('<Return>', self.setTLO)
-        # self.tlo.bind('<KP_Enter>', self.setTLO)
-        # tkExtra.Balloon.set(self.tlo, _("Tool length offset [G43.1#]"))
-        # # self.addWidget(self.tlo)
-        #
-        # col += 1
-        # b = Button(f, text=_("set"),
-        #            command=self.setTLO,
-        #            padx=1, pady=1)
-        # b.grid(row=row, column=col, columnspan=2, sticky=W)
-        # # self.addWidget(b)
-        #
-        # # g92
-        # col += 1
-        # Label(f, text=_("G92:")).grid(row=row, column=col, sticky=E)
-        #
-        # col += 1
-        # self.g92 = Label(f, text="")
-        # self.g92.grid(row=row, column=col, columnspan=3, sticky=EW)
-        # tkExtra.Balloon.set(self.g92, _("Set position [G92 X# Y# Z#]"))
-        # # self.addWidget(self.g92)
-        #
-        # # ---
-        # f.grid_columnconfigure(1, weight=1)
-        # f.grid_columnconfigure(4, weight=1)
-        #
-        # # Spindle
-        # f = Frame(self())
-        # f.pack(side=BOTTOM, fill=X)
-        #
-        # self.override = IntVar()
-        # self.override.set(100)
-        # self.spindle = BooleanVar()
-        # self.spindleSpeed = IntVar()
-        #
-        # col, row = 0, 0
-        # self.overrideCombo = tkExtra.Combobox(f, width=8, command=self.overrideComboChange)
-        # self.overrideCombo.fill(OVERRIDES)
-        # self.overrideCombo.grid(row=row, column=col, pady=0, sticky=EW)
-        # tkExtra.Balloon.set(self.overrideCombo, _("Select override type."))
-        #
-        # b = Button(f, text=_("Reset"), pady=0, command=self.resetOverride)
-        # b.grid(row=row + 1, column=col, pady=0, sticky=NSEW)
-        # tkExtra.Balloon.set(b, _("Reset override to 100%"))
-        #
-        # col += 1
-        # self.overrideScale = Scale(f,
-        #                            command=self.overrideChange,
-        #                            variable=self.override,
-        #                            showvalue=True,
-        #                            orient=HORIZONTAL,
-        #                            from_=25,
-        #                            to_=200,
-        #                            resolution=1)
-        # self.overrideScale.bind("<Double-1>", self.resetOverride)
-        # self.overrideScale.bind("<Button-3>", self.resetOverride)
-        # self.overrideScale.grid(row=row, column=col, rowspan=2, columnspan=4, sticky=EW)
-        # tkExtra.Balloon.set(self.overrideScale, _("Set Feed/Rapid/Spindle Override. Right or Double click to reset."))
-        #
-        # self.overrideCombo.set(OVERRIDES[0])
-        #
-        # # ---
-        # row += 2
-        # col = 0
-        # b = Checkbutton(f, text=_("Spindle"),
-        #                 image=Utils.icons["spinningtop"],
-        #                 command=self.spindleControl,
-        #                 compound=LEFT,
-        #                 indicatoron=False,
-        #                 variable=self.spindle,
-        #                 padx=1,
-        #                 pady=0)
-        # tkExtra.Balloon.set(b, _("Start/Stop spindle (M3/M5)"))
-        # b.grid(row=row, column=col, pady=0, sticky=NSEW)
-        # # self.addWidget(b)
-        #
-        # col += 1
-        # b = Scale(f, variable=self.spindleSpeed,
-        #           command=self.spindleControl,
-        #           showvalue=True,
-        #           orient=HORIZONTAL,
-        #           from_=Utils.config.get("CNC", "spindlemin"),
-        #           to_=Utils.config.get("CNC", "spindlemax"))
-        # tkExtra.Balloon.set(b, _("Set spindle RPM"))
-        # b.grid(row=row, column=col, sticky=EW, columnspan=3)
+        # Units mode
+        col += 2
+        Label(f, text=_("Units:")).grid(row=row, column=col, sticky=E)
+        col += 1
+        self.units = tkExtra.Combobox(f, True,
+                                      command=self.unitsChange,
+                                      width=5,
+                                      background=tkExtra.GLOBAL_CONTROL_BACKGROUND)
+        self.units.fill(sorted(UNITS.values()))
+        self.units.grid(row=row, column=col, sticky=EW)
+        tkExtra.Balloon.set(self.units, _("Units [G20, G21]"))
+        for k, v in UNITS.items(): self.gstate[k] = (self.units, v)
+        # self.addWidget(self.units)
+        
+        # Tool
+        row += 1
+        col = 0
+        Label(f, text=_("Tool:")).grid(row=row, column=col, sticky=E)
+        
+        col += 1
+        self.toolEntry = tkExtra.IntegerEntry(f, background=tkExtra.GLOBAL_CONTROL_BACKGROUND, width=5)
+        self.toolEntry.grid(row=row, column=col, sticky=EW)
+        tkExtra.Balloon.set(self.toolEntry, _("Tool number [T#]"))
+        # self.addWidget(self.toolEntry)
+        
+        col += 1
+        b = Button(f, text=_("set"),
+                   command=self.setTool,
+                   padx=1, pady=1)
+        b.grid(row=row, column=col, sticky=W)
         # self.addWidget(b)
-        #
+        
+        # Plane
+        col += 1
+        Label(f, text=_("Plane:")).grid(row=row, column=col, sticky=E)
+        col += 1
+        self.plane = tkExtra.Combobox(f, True,
+                                      command=self.planeChange,
+                                      width=5,
+                                      background=tkExtra.GLOBAL_CONTROL_BACKGROUND)
+        self.plane.fill(sorted(PLANE.values()))
+        self.plane.grid(row=row, column=col, sticky=EW)
+        tkExtra.Balloon.set(self.plane, _("Plane [G17,G18,G19]"))
+        # self.addWidget(self.plane)
+        
+        for k, v in PLANE.items(): self.gstate[k] = (self.plane, v)
+        
+        # Feed speed
+        row += 1
+        col = 0
+        Label(f, text=_("Feed:")).grid(row=row, column=col, sticky=E)
+        
+        col += 1
+        self.feedRate = tkExtra.FloatEntry(f, background=tkExtra.GLOBAL_CONTROL_BACKGROUND, disabledforeground="Black",
+                                           width=5)
+        self.feedRate.grid(row=row, column=col, sticky=EW)
+        self.feedRate.bind('<Return>', self.setFeedRate)
+        self.feedRate.bind('<KP_Enter>', self.setFeedRate)
+        tkExtra.Balloon.set(self.feedRate, _("Feed Rate [F#]"))
+        self.addWidget(self.feedRate)
+        
+        col += 1
+        b = Button(f, text=_("set"),
+                   command=self.setFeedRate,
+                   padx=1, pady=1)
+        b.grid(row=row, column=col, columnspan=2, sticky=W)
+        # self.addWidget(b)
+        
+        # Feed mode
+        col += 1
+        Label(f, text=_("Mode:")).grid(row=row, column=col, sticky=E)
+        
+        col += 1
+        self.feedMode = tkExtra.Combobox(f, True,
+                                         command=self.feedModeChange,
+                                         width=5,
+                                         background=tkExtra.GLOBAL_CONTROL_BACKGROUND)
+        self.feedMode.fill(sorted(FEED_MODE.values()))
+        self.feedMode.grid(row=row, column=col, sticky=EW)
+        tkExtra.Balloon.set(self.feedMode, _("Feed Mode [G93, G94, G95]"))
+        for k, v in FEED_MODE.items(): self.gstate[k] = (self.feedMode, v)
+        self.addWidget(self.feedMode)
+        
+        # TLO
+        row += 1
+        col = 0
+        Label(f, text=_("TLO:")).grid(row=row, column=col, sticky=E)
+        
+        col += 1
+        self.tlo = tkExtra.FloatEntry(f, background=tkExtra.GLOBAL_CONTROL_BACKGROUND, disabledforeground="Black",
+                                      width=5)
+        self.tlo.grid(row=row, column=col, sticky=EW)
+        self.tlo.bind('<Return>', self.setTLO)
+        self.tlo.bind('<KP_Enter>', self.setTLO)
+        tkExtra.Balloon.set(self.tlo, _("Tool length offset [G43.1#]"))
+        # self.addWidget(self.tlo)
+        
+        col += 1
+        b = Button(f, text=_("set"),
+                   command=self.setTLO,
+                   padx=1, pady=1)
+        b.grid(row=row, column=col, columnspan=2, sticky=W)
+        # self.addWidget(b)
+        
+        # g92
+        col += 1
+        Label(f, text=_("G92:")).grid(row=row, column=col, sticky=E)
+        
+        col += 1
+        self.g92 = Label(f, text="")
+        self.g92.grid(row=row, column=col, columnspan=3, sticky=EW)
+        tkExtra.Balloon.set(self.g92, _("Set position [G92 X# Y# Z#]"))
+        # self.addWidget(self.g92)
+        
+        # ---
+        f.grid_columnconfigure(1, weight=1)
+        f.grid_columnconfigure(4, weight=1)
+        
+        # Spindle
+        f = Frame(self())
+        f.pack(side=BOTTOM, fill=X)
+        
+        self.override = IntVar()
+        self.override.set(100)
+        self.spindle = BooleanVar()
+        self.spindleSpeed = IntVar()
+        
+        col, row = 0, 0
+        self.overrideCombo = tkExtra.Combobox(f, width=8, command=self.overrideComboChange)
+        self.overrideCombo.fill(OVERRIDES)
+        self.overrideCombo.grid(row=row, column=col, pady=0, sticky=EW)
+        tkExtra.Balloon.set(self.overrideCombo, _("Select override type."))
+        
+        b = Button(f, text=_("Reset"), pady=0, command=self.resetOverride)
+        b.grid(row=row + 1, column=col, pady=0, sticky=NSEW)
+        tkExtra.Balloon.set(b, _("Reset override to 100%"))
+        
+        col += 1
+        self.overrideScale = Scale(f,
+                                   command=self.overrideChange,
+                                   variable=self.override,
+                                   showvalue=True,
+                                   orient=HORIZONTAL,
+                                   from_=25,
+                                   to_=200,
+                                   resolution=1)
+        self.overrideScale.bind("<Double-1>", self.resetOverride)
+        self.overrideScale.bind("<Button-3>", self.resetOverride)
+        self.overrideScale.grid(row=row, column=col, rowspan=2, columnspan=4, sticky=EW)
+        tkExtra.Balloon.set(self.overrideScale, _("Set Feed/Rapid/Spindle Override. Right or Double click to reset."))
+        
+        self.overrideCombo.set(OVERRIDES[0])
+        
+        # ---
+        row += 2
+        col = 0
+        b = Checkbutton(f, text=_("Spindle"),
+                        image=Utils.icons["spinningtop"],
+                        command=self.spindleControl,
+                        compound=LEFT,
+                        indicatoron=False,
+                        variable=self.spindle,
+                        padx=1,
+                        pady=0)
+        tkExtra.Balloon.set(b, _("Start/Stop spindle (M3/M5)"))
+        b.grid(row=row, column=col, pady=0, sticky=NSEW)
+        # self.addWidget(b)
+        
+        col += 1
+        b = Scale(f, variable=self.spindleSpeed,
+                  command=self.spindleControl,
+                  showvalue=True,
+                  orient=HORIZONTAL,
+                  from_=Utils.config.get("CNC", "spindlemin"),
+                  to_=Utils.config.get("CNC", "spindlemax"))
+        tkExtra.Balloon.set(b, _("Set spindle RPM"))
+        b.grid(row=row, column=col, sticky=EW, columnspan=3)
+        self.addWidget(b)
+        
+        f.grid_columnconfigure(1, weight=1)
+        
+        # Coolant control
+        
+        self.coolant = BooleanVar()
+        self.mist = BooleanVar()
+        self.flood = BooleanVar()
+        
+        row += 1
+        col = 0
+        Label(f, text=_("Coolant:")).grid(row=row, column=col, sticky=E)
+        col += 1
+        
+        coolantDisable = Checkbutton(f, text=_("OFF"),
+                                     command=self.coolantOff,
+                                     indicatoron=False,
+                                     variable=self.coolant,
+                                     padx=1,
+                                     pady=0)
+        tkExtra.Balloon.set(coolantDisable, _("Stop cooling (M9)"))
+        coolantDisable.grid(row=row, column=col, pady=0, sticky=NSEW)
+        # self.addWidget(coolantDisable)
+        
+        col += 1
+        floodEnable = Checkbutton(f, text=_("Flood"),
+                                  command=self.coolantFlood,
+                                  indicatoron=False,
+                                  variable=self.flood,
+                                  padx=1,
+                                  pady=0)
+        tkExtra.Balloon.set(floodEnable, _("Start flood (M8)"))
+        floodEnable.grid(row=row, column=col, pady=0, sticky=NSEW)
+        # self.addWidget(floodEnable)
+        
+        col += 1
+        mistEnable = Checkbutton(f, text=_("Mist"),
+                                 command=self.coolantMist,
+                                 indicatoron=False,
+                                 variable=self.mist,
+                                 padx=1,
+                                 pady=0)
+        tkExtra.Balloon.set(mistEnable, _("Start mist (M7)"))
+        mistEnable.grid(row=row, column=col, pady=0, sticky=NSEW)
+        # self.addWidget(mistEnable)
         # f.grid_columnconfigure(1, weight=1)
-        #
-        # # Coolant control
-        #
-        # self.coolant = BooleanVar()
-        # self.mist = BooleanVar()
-        # self.flood = BooleanVar()
-        #
-        # row += 1
-        # col = 0
-        # Label(f, text=_("Coolant:")).grid(row=row, column=col, sticky=E)
-        # col += 1
-        #
-        # coolantDisable = Checkbutton(f, text=_("OFF"),
-        #                              command=self.coolantOff,
-        #                              indicatoron=False,
-        #                              variable=self.coolant,
-        #                              padx=1,
-        #                              pady=0)
-        # tkExtra.Balloon.set(coolantDisable, _("Stop cooling (M9)"))
-        # coolantDisable.grid(row=row, column=col, pady=0, sticky=NSEW)
-        # # self.addWidget(coolantDisable)
-        #
-        # col += 1
-        # floodEnable = Checkbutton(f, text=_("Flood"),
-        #                           command=self.coolantFlood,
-        #                           indicatoron=False,
-        #                           variable=self.flood,
-        #                           padx=1,
-        #                           pady=0)
-        # tkExtra.Balloon.set(floodEnable, _("Start flood (M8)"))
-        # floodEnable.grid(row=row, column=col, pady=0, sticky=NSEW)
-        # # self.addWidget(floodEnable)
-        #
-        # col += 1
-        # mistEnable = Checkbutton(f, text=_("Mist"),
-        #                          command=self.coolantMist,
-        #                          indicatoron=False,
-        #                          variable=self.mist,
-        #                          padx=1,
-        #                          pady=0)
-        # tkExtra.Balloon.set(mistEnable, _("Start mist (M7)"))
-        # mistEnable.grid(row=row, column=col, pady=0, sticky=NSEW)
-        # # self.addWidget(mistEnable)
-        # # f.grid_columnconfigure(1, weight=1)
 
     # ----------------------------------------------------------------------
     def overrideChange(self, event=None):
